@@ -3,11 +3,14 @@ This module contains tests for the ML client. Run with 'python -m pytest test_ap
 or to see with coverage run with 'python -m pytest --cov=app test_app.py'
 """
 
+
 from unittest.mock import patch, MagicMock
 from io import BytesIO
 import base64
 import pytest
 from PIL import Image
+import cv2
+import requests
 from app import app, detect_objects
 
 app.config["TESTING"] = True
@@ -22,7 +25,7 @@ def fixture_test_client():
 
 @patch("app.model")
 def test_detect_objects(mock_model):
-    """Test object detection using mocked YOLOv5 model predictions."""
+    """Test the object detection functionality by mocking YOLOv5's predictions."""
     # mock YOLOv5's output
     mock_results = MagicMock()
     mock_results.pandas.return_value.xyxy = [
@@ -88,7 +91,8 @@ def test_detect_route_with_file(test_client):
 
 
 def test_encode_image():
-    """Test image encoding to base64."""
+    """Test the encoding of an image to base64.
+    Verifies that the encoded image is a valid non-empty string."""
     # create a sample blank image
     image = Image.new("RGB", (100, 100), color="white")
     buffered = BytesIO()
@@ -98,3 +102,58 @@ def test_encode_image():
     # check encoding result is a string and not empty
     assert isinstance(encoded_image, str)
     assert len(encoded_image) > 0
+
+# send POST request to /api/detect for image screenshots from webcam
+
+# capture an image from a webcam feed
+def capture_image_from_webcam():
+    """Capture an image from the webcam and return it as bytes.
+    Initializes the webcam, captures a frame, and converts it to JPEG format.
+    Returns the image bytes if successful, or None if the capture fails."""
+    # Initialize webcam
+    cap = cv2.VideoCapture(0)
+    # Read a frame from the webcam
+    ret, frame = cap.read()
+    # Release the webcam
+    cap.release()
+    cv2.destroyAllWindows()
+
+    if not ret:
+        print("Failed to capture image")
+        return None
+
+    # Convert to JPEG format for the API
+    _, buffer = cv2.imencode('.jpg', frame)
+    image_bytes = buffer.tobytes()
+    return image_bytes
+
+def send_image_to_detect(image_bytes):
+    """Send the captured image to the /api/detect route for object detection.
+    Sends the image as a form-data payload and prints the detection result.
+    Handles errors if the request fails."""
+    # Create a form-data payload
+    files = {'file': ('webcam-image.jpg', image_bytes, 'image/jpeg')}
+    url = 'http://localhost:3001/api/detect'
+
+    try:
+        # Send the image to the ML client for detection
+        response = requests.post(url, files=files)
+        response.raise_for_status()  # Raise an error if the request was unsuccessful
+        result = response.json()
+        print("Detection Result:", result)
+        display_detection_result(result)
+    except requests.RequestException as e:
+        print("Error:", e)
+
+def display_detection_result(result):
+    """Display the detection results in the console.
+    Iterates over the detected objects and prints the label and confidence score."""
+    print(f"Timestamp: {result['timestamp']}")
+    print("Detected Objects:")
+    for obj in result['detected_objects']:
+        print(f" - {obj['label']}: {obj['confidence']:.2f}")
+
+# Capture and process an image when script runs
+image_bytes_original = capture_image_from_webcam()
+if image_bytes_original:
+    send_image_to_detect(image_bytes_original)

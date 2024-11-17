@@ -21,8 +21,12 @@ services:
     depends_on:
       - mongodb
       - ml-client
+    devices:
+      - /dev/video0:/dev/video0
     networks:
       - app-network
 networks:
   app-network:
     driver: bridge
+
+    

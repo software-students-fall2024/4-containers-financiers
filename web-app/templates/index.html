@@ -1,69 +1,59 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.2">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
-    span.s1 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Object Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #video-container {
+            width: 80%;
+            margin: 20px auto;
+            border: 2px solid #ccc;
+            padding: 10px;
+            display: inline-block;
+        }
+        #labels-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #labels-list li {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Real-Time Object Detection&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: Arial, sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#labels-list {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>list-style-type: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>#labels-list li {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.2em;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 5px 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;h1&gt;Real-Time Object Detection Dashboard&lt;/h1&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Live Video Feed&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;img src="{{ url_for('video_feed') }}" width="80%" /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Detected Labels and Confidence&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;ul id="labels-list"&gt;&lt;/ul&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>setInterval(() =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>fetch('/latest_detection')</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.then(response =&gt; response.json())</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.then(data =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const list = document.getElementById('labels-list');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>list.innerHTML = '';<span class="Apple-converted-space">  </span>// Clear current list</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>data.labels.forEach(label =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>const listItem = document.createElement('li');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>listItem.textContent = `${label.name}: ${label.confidence.toFixed(2)}`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>list.appendChild(listItem);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>})</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.catch(error =&gt; console.error("Error fetching detection data:", error));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}, 2000);<span class="Apple-converted-space">  </span>// Update every 2 seconds</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+    <h1>Real-Time Object Detection Dashboard</h1>
+
+    <div id="video-container">
+        <h2>Live Video Feed</h2>
+        <img src="{{ url_for('video_feed') }}" width="100%" />
+    </div>
+
+    <div>
+        <h2>Detected Labels and Confidence</h2>
+        <ul id="labels-list"></ul>
+    </div>
+
+    <script>
+        setInterval(() => {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById('labels-list');
+                    list.innerHTML = ''; // Clear current list
+                    data.forEach(label => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${label.name}: ${label.confidence.toFixed(2)}`;
+                        list.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error("Error fetching detection data:", error));
+        }, 2000); // Update every 2 seconds
+    </script>
 </body>
 </html>

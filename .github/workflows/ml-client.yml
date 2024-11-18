@@ -1,0 +1,48 @@
+name: Machine Learning Client CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'machine-learning-client/**'
+      - '.github/workflows/ml-client.yml'
+      
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'machine-learning-client/**'
+      - '.github/workflows/ml-client.yml'
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    container:
+      image: nvidia/cuda:12.6.2-devel-ubuntu22.04
+    defaults:
+      run:
+        working-directory: ./machine-learning-client
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python environment
+        run: |
+          apt-get update
+          apt-get install -y python3.12 python3-pip
+          python3.12 -m pip install --upgrade pip
+          python3.12 -m pip install pipenv
+
+      - name: Install dependencies
+        run: |
+          pipenv install --dev
+
+      - name: Run tests
+        run: |
+          pipenv run coverage run -m pytest
+          pipenv run coverage report -i
+
+      - name: Build Docker image
+        run: |
+          docker build -t ml-client .

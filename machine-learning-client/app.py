@@ -4,14 +4,15 @@ This module contains the code for the ML client that communicates with the front
 
 from datetime import datetime, timezone
 from io import BytesIO
-
+import os
 import torch
 from flask import Flask, jsonify
 from PIL import Image
 from pymongo.mongo_client import MongoClient
 
 # MongoDB connection
-client = MongoClient("mongodb://localhost:27017/")
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+client = MongoClient(MONGO_URI)
 db = client["object_detection"]
 collection = db["detected_objects"]
 

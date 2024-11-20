@@ -23,6 +23,11 @@ services:
       - ml-client
     networks:
       - app-network
+    devices:
+      - "/dev/video0:/dev/video0"
+    privileged: true
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
 networks:
   app-network:
     driver: bridge

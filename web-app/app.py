@@ -5,7 +5,6 @@ This is the main module for the web app front end.
 import atexit
 from datetime import datetime, timezone
 import os
-
 import cv2
 from bson.binary import Binary
 import requests
@@ -17,8 +16,8 @@ from pymongo import MongoClient
 load_dotenv()
 
 app = Flask(__name__)
-mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
-client = MongoClient(mongo_uri)
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+client = MongoClient(MONGO_URI)
 db = client["object_detection"]
 collection = db["detected_objects"]
 
